@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion / Inscription</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+    }
+
+    input, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #00bcd4;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #008fa1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Inscription</h2>
+    <form id="register-form">
+      <input type="text" id="register-username" placeholder="Nom d'utilisateur" required>
+      <input type="password" id="register-password" placeholder="Mot de passe" required>
+      <button type="submit">S'inscrire</button>
+    </form>
+
+    <h2>Connexion</h2>
+    <form id="login-form">
+      <input type="text" id="login-username" placeholder="Nom d'utilisateur" required>
+      <input type="password" id="login-password" placeholder="Mot de passe" required>
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <script>
+    const apiUrl = 'https://messie-api-login.vercel.app/';
+
+    async function postData(route, data) {
+      try {
+        const res = await fetch(apiUrl + route, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) {
+          const message = await res.text();
+          throw new Error(message || 'Erreur API');
+        }
+
+        return res.json();
+      } catch (err) {
+        alert('Erreur avec l’API : ' + err.message);
+        console.error(err);
+      }
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('register-username').value;
+      const password = document.getElementById('register-password').value;
+
+      const result = await postData('register', { username, password });
+      if (result?.success) {
+        alert('Inscription réussie !');
+        window.location.href = 'blog.html';
+      }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-username').value;
+      const password = document.getElementById('login-password').value;
+
+      const result = await postData('login', { username, password });
+      if (result?.success) {
+        alert('Connexion réussie !');
+        window.location.href = 'blog.html';
+      }
+    });
+  </script>
+</body>
+</html>
